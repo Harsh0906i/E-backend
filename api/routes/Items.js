@@ -30,8 +30,6 @@ router.get('/get', async (req, res, next) => {
 router.get('/getItem/:id', async (req, res, next) => {
     try {
         const item = await Item.findById(req.params.id);
-        console.log('1',req.params.id);
-        console.log('2',item);
         if (!item) {
             return next(errorHandler(404, 'Listing not found'));
         }
