@@ -9,12 +9,15 @@ const mongoose = require("mongoose");
 const Item = require('./models/Items');
 const ItemRoute = require('./routes/Items');
 app.use(cookieParser());
-app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/api/auth', AuthRouter);
 app.use('/api/item', ItemRoute);
-
+const corsOptions = {
+    origin: 'https://e-commerce-cyan-alpha.vercel.app/', // Replace with your frontend URL
+    credentials: true, // Enables cookies or authorization headers with CORS
+};
+app.use(cors(corsOptions));
 main()
     .then(() => {
         console.log("success");
