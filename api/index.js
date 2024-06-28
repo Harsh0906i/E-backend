@@ -17,7 +17,7 @@ const corsOptions = {
     origin: 'https://e-commerce-cyan-alpha.vercel.app/', // Replace with your frontend URL
     credentials: true, // Enables cookies or authorization headers with CORS
 };
-app.use(cors(corsOptions));
+app.use(cors());
 main()
     .then(() => {
         console.log("success");
