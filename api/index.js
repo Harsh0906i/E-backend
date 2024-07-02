@@ -15,7 +15,7 @@ const corsOptions = {
     credentials: true, // Allow cookies and other credentials
   };
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/auth', AuthRouter);
