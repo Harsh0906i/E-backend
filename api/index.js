@@ -8,18 +8,18 @@ const cookieParser = require('cookie-parser');
 const mongoose = require("mongoose");
 const Item = require('./models/Items');
 const ItemRoute = require('./routes/Items');
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/api/auth', AuthRouter);
-app.use('/api/item', ItemRoute);
 const corsOptions = {
     origin: 'https://e-commerce-lr6lhy29y-harshit-singh-aryas-projects.vercel.app/', 
-    methods: ['GET', 'POST','DELETE','UPDATE'], 
+    methods: ['GET', 'POST','DELETE'], 
     allowedHeaders: ['Content-Type', 'Authorization'], 
     credentials: true, 
-  };
+};
 app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/api/auth', AuthRouter);
+app.use('/api/item', ItemRoute);
 main()
     .then(() => {
         console.log("success");
