@@ -14,12 +14,12 @@ app.use(express.json());
 app.use('/api/auth', AuthRouter);
 app.use('/api/item', ItemRoute);
 const corsOptions = {
-    origin: 'https://e-commerce-cyan-alpha.vercel.app/', 
+    origin: 'https://e-commerce-lr6lhy29y-harshit-singh-aryas-projects.vercel.app/', 
     methods: ['GET', 'POST','DELETE','UPDATE'], 
     allowedHeaders: ['Content-Type', 'Authorization'], 
     credentials: true, 
   };
-app.use(cors());
+app.use(cors(corsOptions));
 main()
     .then(() => {
         console.log("success");
