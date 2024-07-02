@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const Item = require('./models/Items');
 const ItemRoute = require('./routes/Items');
 const corsOptions = {
-    origin: 'https://e-commerce-768fs0mmg-harshit-singh-aryas-projects.vercel.app/', // Your frontend domain
+    origin: 'https://e-commerce-cyan-alpha.vercel.app/', // Your frontend domain
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Allow cookies and other credentials
