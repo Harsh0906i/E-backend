@@ -14,9 +14,11 @@ app.use(express.json());
 app.use('/api/auth', AuthRouter);
 app.use('/api/item', ItemRoute);
 const corsOptions = {
-    origin: 'https://e-commerce-cyan-alpha.vercel.app', 
-    credentials: true, // Enables cookies or authorization headers with CORS
-};
+    origin: 'https://e-commerce-cyan-alpha.vercel.app/', 
+    methods: ['GET', 'POST','DELETE','UPDATE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+    credentials: true, 
+  };
 app.use(cors());
 main()
     .then(() => {
