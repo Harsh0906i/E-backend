@@ -9,13 +9,13 @@ const mongoose = require("mongoose");
 const Item = require('./models/Items');
 const ItemRoute = require('./routes/Items');
 const corsOptions = {
-    origin: 'https://e-commerce-lr6lhy29y-harshit-singh-aryas-projects.vercel.app/',
-    methods: ['GET', 'POST', 'DELETE'],
+    origin: 'https://e-commerce-768fs0mmg-harshit-singh-aryas-projects.vercel.app/', // Your frontend domain
+    methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-};
+    credentials: true, // Allow cookies and other credentials
+  };
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/auth', AuthRouter);
