@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const itemSchema = new mongoose.Schema({
+const tempitemSchema = new mongoose.Schema({
     name: {
         type: String,
     },
@@ -28,6 +28,6 @@ const itemSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const Item = mongoose.model('Item', itemSchema);
+const TempItem = mongoose.model('TempItems', tempitemSchema);
 
-module.exports = Item;
+module.exports = TempItem;

@@ -41,7 +41,6 @@ router.post('/signin', async (req, res, next) => {
             return next(errorHandler(404, "Wrong Credentials"))
         }
         const token = jwt.sign({ id: Valid._id }, process.env.JWTSECRET)
-        console.log(Valid)
         res.cookie('access_token', token, { httpOnly: true }).status(200).json(Valid);
 
     } catch (error) {
