@@ -104,8 +104,6 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
                 }
 
                 await newProduct.save();
-                console.log('stored in temp item')
-
                 const mailOptions = {
                     from: process.env.EMAIL,
                     to: process.env.EMAIL,
