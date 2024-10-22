@@ -16,8 +16,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'harshitsingharya24@gmail.com',
-        pass: 'xypgauzgxzvcjxzm'
+        user: process.env.EMAIL,
+        pass: process.env.PASS
     }
 });
 
@@ -107,8 +107,8 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
                 console.log('stored in temp item')
 
                 const mailOptions = {
-                    from: 'harshitsingharya24@gmail.com',
-                    to: 'harshitsingharya24@gmail.com',
+                    from: process.env.EMAIL,
+                    to: process.env.EMAIL,
                     subject: 'Request for uploading product!',
                     html: `
                     <p>You received a product request on your website:</p>
