@@ -9,24 +9,32 @@ const verifyUser = require('../utils/verifyUser');
 
 router.post('/signup', async (req, res, next) => {
     const { username, email, password } = req.body;
-    const existingUser = await userSchema.findOne({ email });
-    if (existingUser) {
-        return next(errorHandler(404, "User already exists!"))
-    }
-    const hash = await bcrypt.hash(password, 10);
-    const newUser = new userSchema({
-        username: username,
-        email: email,
-        password: hash
-    });
 
     try {
+        // Check if user already exists
+        const existingUser = await userSchema.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "User already exists!" });
+        }
+
+        // Hash the password and create new user
+        const hash = await bcrypt.hash(password, 10);
+        const newUser = new userSchema({
+            username,
+            email,
+            password: hash
+        });
+
+        // Save the user to the database
         await newUser.save();
-        res.status(201).json("User created successfully");
+        return res.status(201).json({ success: true, message: "User created successfully" });
+
     } catch (error) {
-        next(errorHandler(403, 'Forbidden'))
+        // Handle any unexpected errors
+        return res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
     }
 });
+
 
 router.post('/signin', async (req, res, next) => {
     const { email, password } = req.body;
