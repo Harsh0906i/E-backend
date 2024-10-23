@@ -9,7 +9,11 @@ const mongoose = require("mongoose");
 const Item = require('./models/Items');
 const ItemRoute = require('./routes/Items');
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://e-com-frontend-omega.vercel.app/', // Set your frontend domain
+    methods: 'GET,POST,PUT,DELETE',
+    credentials: true, // If you're using cookies or sessions
+  }));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/auth', AuthRouter);
