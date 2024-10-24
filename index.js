@@ -10,12 +10,14 @@ const Item = require('./models/Items');
 const ItemRoute = require('./routes/Items');
 app.use(express.json());
 
+// 'https://e-com-frontend-omega.vercel.app'
+
 app.use(cors({
-    origin: 'https://e-com-frontend-omega.vercel.app', // Adjust this to match your frontend URL
-    methods: ['GET', 'POST','DELETE'], // Allow specific methods if needed
-    credentials: true // If you're using cookies or authentication
+    origin: 'https://e-com-frontend-omega.vercel.app', 
+    methods: ['GET', 'POST','DELETE'], 
+    credentials: true 
 }));
-app.options('*', cors()); // Allow preflight requests for all routes
+app.options('*', cors()); 
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
