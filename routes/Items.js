@@ -52,15 +52,15 @@ router.get('/get', async (req, res, next) => {
     }
 });
 
-router.get('/getItem/:id', async (req, res, next) => {
+router.get('/getItem/:id', async (req, res) => {
     try {
         const item = await Item.findById(req.params.id);
         if (!item) {
-            return next(errorHandler(404, 'Listing not found'));
+            res.status(404).json({ message: 'An error occured while fetching the data' })
         }
         res.status(200).json(item);
     } catch (error) {
-        next(errorHandler());
+        res.status(500).json({ message: 'An error occured' })
     }
 });
 
@@ -115,7 +115,7 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
                     <p><img src="${newProduct.image}" alt="Product Image" style="max-width: 100%; height: auto;" /></p>
                     <p>Price: ${newProduct.regularPrice}</p>
                     <p>Discounted price: ${newProduct.discountedPrice}</p>
-                    <a href="http://localhost:5173/admin/${newProduct._id}" style="color: blue; text-decoration: none;">see</a>`
+                    <a href="https://e-com-frontend-omega.vercel.app/admin/${newProduct._id}" style="color: blue; text-decoration: none;">see</a>`
                 };
 
 
@@ -188,7 +188,6 @@ router.post('/delete', verifyUser, async (req, res) => {
     const { user, item } = req.body; // User ID and item ID from the request body
 
     try {
-        // Check if the requesting user is authorized to delete the item
         if (user === id) {
             const findItem = await Item.find({ userRef: user })
             if (!findItem) {
