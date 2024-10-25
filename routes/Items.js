@@ -207,8 +207,7 @@ router.post('/delete', verifyUser, async (req, res) => {
     }
 });
 
-router.post('/admin/:userId', verifyUser, async (req, res) => {
-    // const { productId, action } = req.body;
+router.get('/admin/:userId', verifyUser, async (req, res) => {
     const { userId } = req.params;
     const { id } = req.user
 
@@ -225,42 +224,51 @@ router.post('/admin/:userId', verifyUser, async (req, res) => {
             return res.status(404).json({ message: 'Product not found in TempItem collection' });
         }
 
-        // if (action === 'accept') {
-        //     const newItem = new Item({
-        //         name: tempProduct.name,
-        //         regularPrice: tempProduct.regularPrice,
-        //         storage: {
-        //             RAM: tempProduct.storage.RAM,
-        //             ROM: tempProduct.storage.ROM
-        //         },
-        //         image: tempProduct.image,
-        //         category: tempProduct.category,
-        //         userRef: tempProduct.userRef
-        //     });
+        if (userId === id && user.isAdmin === 'true') {
+            return res.status(200).json(tempProduct);
+        }
 
-        //     if (tempProduct.discountedPrice) {
-        //         newItem.discountedPrice = tempProduct.discountedPrice
-        //     }
-
-        //     await newItem.save();
-        //     // await TempItem.findByIdAndDelete(productId);
-
-        //     if (userId === id && user.isAdmin === 'true') {
-        //         return res.status(200).json({ message: 'Product accepted and moved to Item collection!', newItem });
-        //     } else {
-        //         return res.status(500).json({ message: 'Error occured while fetching the data' });
-        //     }
-        // }
-
-        // if (action === 'reject') {
-        //     await TempItem.findByIdAndDelete(productId);
-        //     return res.status(200).json({ message: 'Product rejected and deleted from TempItem collection!' });
-        // }
-
-        return res.status(200).json(tempProduct);
     } catch (error) {
         return res.status(500).json({ message: 'Error handling product', error: error.message });
     }
 });
+
+router.post('/admin/delete', verifyUser, async (req, res) => {
+    const { id } = req.user;
+    const { productId, action } = req.body;
+    const tempProduct = await TempItem.find({});
+    const user = await User.findById(id)
+    if (!id) {
+        return
+    }
+    if (user.isAdmin === 'true') {
+        if (action === 'accept') {
+            const newItem = new Item({
+                name: tempProduct.name,
+                regularPrice: tempProduct.regularPrice,
+                storage: {
+                    RAM: tempProduct.storage.RAM,
+                    ROM: tempProduct.storage.ROM
+                },
+                image: tempProduct.image,
+                category: tempProduct.category,
+                userRef: tempProduct.userRef
+            });
+
+            if (tempProduct.discountedPrice) {
+                newItem.discountedPrice = tempProduct.discountedPrice
+            }
+
+            await newItem.save();
+            await TempItem.findByIdAndDelete(productId);
+
+        }
+
+        if (action === 'reject') {
+            await TempItem.findByIdAndDelete(productId);
+            return res.status(200).json({ message: 'Product rejected and deleted from TempItem collection!' });
+        }
+    }
+})
 
 module.exports = router;
