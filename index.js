@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(cors({
     origin: 'https://e-com-frontend-omega.vercel.app',
-    methods: ['GET', 'POST', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
 app.options('*', cors());
