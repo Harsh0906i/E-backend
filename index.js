@@ -13,11 +13,11 @@ app.use(express.json());
 // 'https://e-com-frontend-omega.vercel.app'
 
 app.use(cors({
-    origin: 'https://e-com-frontend-omega.vercel.app', 
-    methods: ['GET', 'POST','DELETE'], 
-    credentials: true 
+    origin: 'http://localhost:8080',
+    methods: ['GET', 'POST', 'DELETE'],
+    credentials: true
 }));
-app.options('*', cors()); 
+app.options('*', cors());
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
