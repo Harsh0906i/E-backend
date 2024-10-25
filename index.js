@@ -17,7 +17,13 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
-app.options('*', cors());
+
+app.options('*', cors({
+    origin: 'https://e-com-frontend-omega.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
+
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
