@@ -260,28 +260,32 @@ router.get('/admin/:userId', verifyUser, async (req, res) => {
 router.post('/admin/delete', verifyUser, async (req, res) => {
     const { id } = req.user;
     const { productId, action } = req.body;
-    const tempProduct = await TempItem.find({});
     const user = await User.findById(id)
     try {
         if (!id) {
             return res.status(404).json({ message: 'you are unauthorized!' });
         }
         if (user.isAdmin === 'true') {
+            const requestedproduct = await TempItem.findById(productId)
+            if (!requestedproduct) {
+                return res.status(404).json({ message: 'product not found!' });
+            }
+
             if (action === 'accept') {
                 const newItem = new Item({
-                    name: tempProduct.name,
-                    regularPrice: tempProduct.regularPrice,
+                    name: requestedproduct.name,
+                    regularPrice: requestedproduct.regularPrice,
                     storage: {
-                        RAM: tempProduct.storage.RAM,
-                        ROM: tempProduct.storage.ROM
+                        RAM: requestedproduct.storage.RAM,
+                        ROM: requestedproduct.storage.ROM
                     },
-                    image: tempProduct.image,
-                    category: tempProduct.category,
-                    userRef: tempProduct.userRef
+                    image: requestedproduct.image,
+                    category: requestedproduct.category,
+                    userRef: requestedproduct.userRef
                 });
 
-                if (tempProduct.discountedPrice) {
-                    newItem.discountedPrice = tempProduct.discountedPrice
+                if (requestedproduct.discountedPrice) {
+                    newItem.discountedPrice = requestedproduct.discountedPrice
                 }
 
                 await newItem.save();
