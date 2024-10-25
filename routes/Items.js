@@ -115,11 +115,9 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
                     <p><img src="${newProduct.image}" alt="Product Image" style="max-width: 100%; height: auto;" /></p>
                     <p>Price: ${newProduct.regularPrice}</p>
                     <p>Discounted price: ${newProduct.discountedPrice}</p>
-                    <a href="https://e-com-frontend-omega.vercel.app/admin/${newProduct._id}" style="color: blue; text-decoration: none;">see</a>`
+                    <a href="https://e-com-frontend-omega.vercel.app" style="color: blue; text-decoration: none;">see</a>`
                 };
 
-
-                // Send the email
                 await transporter.sendMail(mailOptions);
                 res.status(201).json(newProduct);
             }
@@ -160,8 +158,6 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
         );
         stream.end(req.file.buffer);
     }
-
-
 });
 
 router.get('/dashboard/:userid', verifyUser, async (req, res) => {
@@ -212,7 +208,6 @@ router.get('/admin/:userId', verifyUser, async (req, res) => {
     const { id } = req.user
 
     try {
-
         const user = await User.findById(userId)
         if (!user) {
             return res.status(404).json({ message: 'User not found!' });
@@ -238,36 +233,43 @@ router.post('/admin/delete', verifyUser, async (req, res) => {
     const { productId, action } = req.body;
     const tempProduct = await TempItem.find({});
     const user = await User.findById(id)
-    if (!id) {
-        return
-    }
-    if (user.isAdmin === 'true') {
-        if (action === 'accept') {
-            const newItem = new Item({
-                name: tempProduct.name,
-                regularPrice: tempProduct.regularPrice,
-                storage: {
-                    RAM: tempProduct.storage.RAM,
-                    ROM: tempProduct.storage.ROM
-                },
-                image: tempProduct.image,
-                category: tempProduct.category,
-                userRef: tempProduct.userRef
-            });
+    try {
+        if (!id) {
+            return res.status(404).json({ message: 'you are unauthorized!' });
+        }
+        if (user.isAdmin === 'true') {
+            if (action === 'accept') {
+                const newItem = new Item({
+                    name: tempProduct.name,
+                    regularPrice: tempProduct.regularPrice,
+                    storage: {
+                        RAM: tempProduct.storage.RAM,
+                        ROM: tempProduct.storage.ROM
+                    },
+                    image: tempProduct.image,
+                    category: tempProduct.category,
+                    userRef: tempProduct.userRef
+                });
 
-            if (tempProduct.discountedPrice) {
-                newItem.discountedPrice = tempProduct.discountedPrice
+                if (tempProduct.discountedPrice) {
+                    newItem.discountedPrice = tempProduct.discountedPrice
+                }
+
+                await newItem.save();
+                await TempItem.findByIdAndDelete(productId);
+                return res.status(200).json({ message: 'Product accepted and moved to Item collection!' });
             }
 
-            await newItem.save();
-            await TempItem.findByIdAndDelete(productId);
-
+            if (action === 'reject') {
+                await TempItem.findByIdAndDelete(productId);
+                return res.status(200).json({ message: 'Product rejected and deleted from TempItem collection!' });
+            }
         }
-
-        if (action === 'reject') {
-            await TempItem.findByIdAndDelete(productId);
-            return res.status(200).json({ message: 'Product rejected and deleted from TempItem collection!' });
+        else {
+            return res.status(404).json({ message: 'you are unauthorised to view!' });
         }
+    } catch (error) {
+        console.error('error', error)
     }
 })
 
