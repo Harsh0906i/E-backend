@@ -13,7 +13,7 @@ app.use(express.json());
 // 'https://e-com-frontend-omega.vercel.app'
 
 app.use(cors({
-    origin: 'http://localhost:8080',
+    origin: 'https://e-com-frontend-omega.vercel.app',
     methods: ['GET', 'POST', 'DELETE'],
     credentials: true
 }));
