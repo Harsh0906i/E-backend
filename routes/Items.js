@@ -78,40 +78,97 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
         }
 
         const findUser = await User.findById(userid)
+        if (!findUser) {
+            return res.status(404).json({ message: 'user not found' });
+        }
 
-        if (findUser.isAdmin === 'false') {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "E-com" },
+            async (error, result) => {
+                if (error) {
+                    return res.json({ message: 'Failed to upload product' });
+                }
 
-            const stream = cloudinary.uploader.upload_stream(
-                { folder: "E-com" },
-                async (error, result) => {
-                    if (error) {
-                        return res.json({ message: 'Failed to upload product' });
-                    }
+                const newProduct = new Item({
+                    name,
+                    regularPrice,
+                    storage: {
+                        RAM,
+                        ROM,
+                    },
+                    image: result.secure_url,
+                    category: productType,
+                    userRef: userid,
+                });
 
-                    const newProduct = new TempItem({
-                        name,
-                        regularPrice,
-                        storage: {
-                            RAM,
-                            ROM,
-                        },
-                        image: result.secure_url,
-                        category: productType,
-                        userRef: userid,
-                    });
+                if (req.body.discountedPrice) {
+                    const discountedPrice = req.body.discountedPrice[0];
+                    newProduct.discountedPrice = discountedPrice;
+                }
 
-                    if (req.body.discountedPrice) {
-                        const discountedPrice = req.body.discountedPrice[0];
-                        newProduct.discountedPrice = discountedPrice;
-                    }
+                await newProduct.save();
 
-                    await newProduct.save();
 
-                    const mailOptions = {
-                        from: process.env.EMAIL,
-                        to: process.env.EMAIL,
-                        subject: 'Request for uploading product!',
-                        html: `
+                res.status(201).json(newProduct);
+            }
+        );
+        stream.end(req.file.buffer);
+
+    } catch (error) {
+        res.status(500).json('an error occured', error);
+    }
+});
+
+router.post('/request/:userid', upload.single('image'), async (req, res) => {
+    try {
+        const { userid } = req.params;
+        const name = req.body.name;
+        const regularPrice = req.body.regularPrice;
+        const RAM = req.body.RAM;
+        const ROM = req.body.ROM;
+        const productType = req.body.productType;
+
+        if (!req.file) {
+            return res.status(400).send('No file uploaded.');
+        }
+
+        const findUser = await User.findById(userid)
+
+        if (!findUser) {
+            return res.status(404).json({ message: 'user not found!' })
+        }
+
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "E-com" },
+            async (error, result) => {
+                if (error) {
+                    return res.json({ message: 'Failed to upload product' });
+                }
+
+                const newProduct = new TempItem({
+                    name,
+                    regularPrice,
+                    storage: {
+                        RAM,
+                        ROM,
+                    },
+                    image: result.secure_url,
+                    category: productType,
+                    userRef: userid,
+                });
+
+                if (req.body.discountedPrice) {
+                    const discountedPrice = req.body.discountedPrice[0];
+                    newProduct.discountedPrice = discountedPrice;
+                }
+
+                await newProduct.save();
+
+                const mailOptions = {
+                    from: process.env.EMAIL,
+                    to: process.env.EMAIL,
+                    subject: 'Request for uploading product!',
+                    html: `
                         <p>You received a product request on your website:</p>
                         <p>Requested by email: ${findUser.email}</p>
                         <p>Product: ${newProduct.name}</p>
@@ -119,50 +176,16 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
                         <p>Price: ${newProduct.regularPrice}</p>
                         <p>Discounted price: ${newProduct.discountedPrice}</p>
                         <a href="https://e-com-frontend-omega.vercel.app" style="color: blue; text-decoration: none;">see</a>`
-                    };
+                };
+                await transporter.sendMail(mailOptions);
 
-                    await transporter.sendMail(mailOptions);
-                    res.status(201).json(newProduct);
-                    console.log('stored in temp')
-                }
-            );
+                res.status(201).json(newProduct);
+            }
+        );
+        stream.end(req.file.buffer);
 
-            stream.end(req.file.buffer);
-
-        } else {
-
-            const stream = cloudinary.uploader.upload_stream(
-                { folder: "E-com" },
-                async (error, result) => {
-                    if (error) {
-                        return res.json({ message: 'Failed to upload product' });
-                    }
-
-                    const newProduct = new Item({
-                        name,
-                        regularPrice,
-                        storage: {
-                            RAM,
-                            ROM,
-                        },
-                        image: result.secure_url,
-                        category: productType,
-                        userRef: userid,
-                    });
-
-                    if (req.body.discountedPrice) {
-                        const discountedPrice = req.body.discountedPrice[0];
-                        newProduct.discountedPrice = discountedPrice;
-                    }
-
-                    await newProduct.save();
-                    res.status(201).json(newProduct);
-                }
-            );
-            stream.end(req.file.buffer);
-        }
     } catch (error) {
-
+        res.status(500).json('an error occured', error);
     }
 });
 
