@@ -257,7 +257,7 @@ router.post('/admin/:userId', verifyUser, async (req, res) => {
         //     return res.status(200).json({ message: 'Product rejected and deleted from TempItem collection!' });
         // }
 
-        return res.status(200).json({ tempProduct});
+        return res.status(200).json(tempProduct);
     } catch (error) {
         return res.status(500).json({ message: 'Error handling product', error: error.message });
     }
