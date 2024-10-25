@@ -164,20 +164,20 @@ router.post('/request/:userid', upload.single('image'), async (req, res) => {
 
                 await newProduct.save();
 
-                const mailOptions = {
-                    from: process.env.EMAIL,
-                    to: process.env.EMAIL,
-                    subject: 'Request for uploading product!',
-                    html: `
-                        <p>You received a product request on your website:</p>
-                        <p>Requested by email: ${findUser.email}</p>
-                        <p>Product: ${newProduct.name}</p>
-                        <p><img src="${newProduct.image}" alt="Product Image" style="max-width: 100%; height: auto;" /></p>
-                        <p>Price: ${newProduct.regularPrice}</p>
-                        <p>Discounted price: ${newProduct.discountedPrice}</p>
-                        <a href="https://e-com-frontend-omega.vercel.app" style="color: blue; text-decoration: none;">see</a>`
-                };
-                await transporter.sendMail(mailOptions);
+                // const mailOptions = {
+                //     from: process.env.EMAIL,
+                //     to: process.env.EMAIL,
+                //     subject: 'Request for uploading product!',
+                //     html: `
+                //         <p>You received a product request on your website:</p>
+                //         <p>Requested by email: ${findUser.email}</p>
+                //         <p>Product: ${newProduct.name}</p>
+                //         <p><img src="${newProduct.image}" alt="Product Image" style="max-width: 100%; height: auto;" /></p>
+                //         <p>Price: ${newProduct.regularPrice}</p>
+                //         <p>Discounted price: ${newProduct.discountedPrice}</p>
+                //         <a href="https://e-com-frontend-omega.vercel.app" style="color: blue; text-decoration: none;">see</a>`
+                // };
+                // await transporter.sendMail(mailOptions);
 
                 res.status(201).json(newProduct);
             }
