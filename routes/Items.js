@@ -123,6 +123,7 @@ router.post('/sell/:userid', upload.single('image'), async (req, res) => {
 
                     await transporter.sendMail(mailOptions);
                     res.status(201).json(newProduct);
+                    console.log('stored in temp')
                 }
             );
 
