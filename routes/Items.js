@@ -208,7 +208,7 @@ router.post('/delete', verifyUser, async (req, res) => {
 });
 
 router.post('/admin/:userId', verifyUser, async (req, res) => {
-    const { productId, action } = req.body;
+    // const { productId, action } = req.body;
     const { userId } = req.params;
     const { id } = req.user
 
@@ -219,45 +219,45 @@ router.post('/admin/:userId', verifyUser, async (req, res) => {
             return res.status(404).json({ message: 'User not found!' });
         }
 
-        const tempProduct = await TempItem.findById(productId);
+        const tempProduct = await TempItem.find({});
 
         if (!tempProduct) {
             return res.status(404).json({ message: 'Product not found in TempItem collection' });
         }
 
-        if (action === 'accept') {
-            const newItem = new Item({
-                name: tempProduct.name,
-                regularPrice: tempProduct.regularPrice,
-                storage: {
-                    RAM: tempProduct.storage.RAM,
-                    ROM: tempProduct.storage.ROM
-                },
-                image: tempProduct.image,
-                category: tempProduct.category,
-                userRef: tempProduct.userRef
-            });
+        // if (action === 'accept') {
+        //     const newItem = new Item({
+        //         name: tempProduct.name,
+        //         regularPrice: tempProduct.regularPrice,
+        //         storage: {
+        //             RAM: tempProduct.storage.RAM,
+        //             ROM: tempProduct.storage.ROM
+        //         },
+        //         image: tempProduct.image,
+        //         category: tempProduct.category,
+        //         userRef: tempProduct.userRef
+        //     });
 
-            if (tempProduct.discountedPrice) {
-                newItem.discountedPrice = tempProduct.discountedPrice
-            }
+        //     if (tempProduct.discountedPrice) {
+        //         newItem.discountedPrice = tempProduct.discountedPrice
+        //     }
 
-            await newItem.save();
-            await TempItem.findByIdAndDelete(productId);
-            
-            if (userId === id && user.isAdmin === 'true') {
-                return res.status(200).json({ message: 'Product accepted and moved to Item collection!', newItem });
-            } else {
-                return res.status(500).json({ message: 'Error occured while fetching the data' });
-            }
-        }
+        //     await newItem.save();
+        //     // await TempItem.findByIdAndDelete(productId);
 
-        if (action === 'reject') {
-            await TempItem.findByIdAndDelete(productId);
-            return res.status(200).json({ message: 'Product rejected and deleted from TempItem collection!' });
-        }
+        //     if (userId === id && user.isAdmin === 'true') {
+        //         return res.status(200).json({ message: 'Product accepted and moved to Item collection!', newItem });
+        //     } else {
+        //         return res.status(500).json({ message: 'Error occured while fetching the data' });
+        //     }
+        // }
 
-        return res.status(400).json({ message: 'Invalid action' });
+        // if (action === 'reject') {
+        //     await TempItem.findByIdAndDelete(productId);
+        //     return res.status(200).json({ message: 'Product rejected and deleted from TempItem collection!' });
+        // }
+
+        return res.status(200).json({ tempProduct});
     } catch (error) {
         return res.status(500).json({ message: 'Error handling product', error: error.message });
     }
